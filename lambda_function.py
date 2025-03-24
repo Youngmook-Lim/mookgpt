@@ -9,9 +9,12 @@ from config import *
 from helpers import *
 from login_utils import *
 
-client = OpenAI(api_key=os.environ["API_KEY"])
 ssm = boto3.client("ssm")
 secretsmanager = boto3.session.Session().client(service_name="secretsmanager", region_name="ap-northeast-2")
+
+api_key = json.loads(secretsmanager.get_secret_value(SecretId="mookgpt-chatgpt-api-key")["SecretString"]).get("API_KEY")
+
+client = OpenAI(api_key=api_key)
 
 def lambda_handler(event, context):
 
