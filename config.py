@@ -1,4 +1,4 @@
-LOGIN_PERSIST_SECONDS = 3600
+LOGIN_PERSIST_SECONDS = 3600 * 24
 
 NOT_YET_MESSAGE = "아직 제가 생각이 끝나지 않았어요 😭\n잠시 후 아래 말풍선을 눌러주세요!"
 

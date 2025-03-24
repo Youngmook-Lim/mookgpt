@@ -11,7 +11,7 @@ from login_utils import *
 
 client = OpenAI(api_key=os.environ["API_KEY"])
 ssm = boto3.client("ssm")
-
+secretsmanager = boto3.session.Session().client(service_name="secretsmanager", region_name="ap-northeast-2")
 
 def lambda_handler(event, context):
 
@@ -48,7 +48,7 @@ def lambda_handler(event, context):
         else:
             os.remove(filename)
     else:
-        result = verify_login(kakao_request, ssm)
+        result = verify_login(kakao_request, ssm, secretsmanager)
         match result:
             case "login_success":
                 response = text_response_format(LOGIN_SUCCESS_MESSAGE + "\n\n" + HELP_MESSAGE)

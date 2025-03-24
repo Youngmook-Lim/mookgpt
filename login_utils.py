@@ -1,7 +1,7 @@
 from time import time
 from config import LOGIN_PERSIST_SECONDS
 import os
-
+import json
 
 def check_login_yn(kakao_request, ssm):
     user_key = kakao_request["userRequest"]["user"]["id"]
@@ -24,13 +24,15 @@ def is_expired(user_key, last_login_date, ssm):
         return False
 
 
-def verify_login(kakao_request, ssm):
+def verify_login(kakao_request, ssm, secretsmanager):
     user_key = kakao_request["userRequest"]["user"]["id"]
     user_utterance = kakao_request["userRequest"]["utterance"]
 
     if user_utterance.startswith("/login"):
         password = user_utterance.replace("/login", "", 1).strip()
-        if password == os.environ["LOGIN_PASSWORD"]:
+        correct_password = json.loads(
+            secretsmanager.get_secret_value(SecretId="mookgpt-login-password")["SecretString"]).get("LOGIN_PASSWORD")
+        if password == correct_password:
             ssm.put_parameter(Name=f"/sessions/{user_key}", Value="logged_in", Type="String", Overwrite=True)
             return "login_success"
         else:
